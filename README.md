@@ -26,5 +26,5 @@
 12. save_model_path：保存模型路径
 13. test_num：多少step测试
 14. seed：随机种子
-15. weight_decay：权重削减0.01
+15. weight_decay：权重削减
 16. do_train：是否训练，测试时不用指定
