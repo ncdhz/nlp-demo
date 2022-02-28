@@ -100,11 +100,11 @@ def train(model, train_dataloader, optimizer, epochs, test_num, accelerator, pre
         prediction_run()
             
 
-def get_model(base_model_name):
+def get_model(base_model_name, load_model_path):
     config = AutoConfig.from_pretrained(base_model_name)
     model = QAModel.from_pretrained(base_model_name, config=config)
-    if args.load_model_path is not None:
-        if not path.isfile(args.load_model_path):
+    if load_model_path is not None:
+        if not path.isfile(load_model_path):
             logger.warning('load_model_path error')
             return model
         model.load_state_dict(torch.load(args.load_model_path, map_location=torch.device('cpu')))
@@ -144,7 +144,7 @@ def set_seed(seed = None):
 def main(args, accelerator):
     
     base_model_name=args.base_model_name
-    model = get_model(base_model_name)
+    model = get_model(base_model_name, args.load_model_path)
     model = accelerator.prepare_model(model)
 
     tokenizer = get_tokenizer(base_model_name)
