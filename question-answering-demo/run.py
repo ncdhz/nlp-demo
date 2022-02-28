@@ -91,7 +91,7 @@ def train(model, train_dataloader, optimizer, epochs, test_num, accelerator, pre
     for _ in range(epochs):
         for i, batch in enumerate(train_dataloader):
             output = model(**batch)
-            output.loss.backward()
+            accelerator.backward(output.loss)
             optimizer.step()
             optimizer.zero_grad()
             progress_bar.update(1)
