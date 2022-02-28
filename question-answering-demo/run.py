@@ -107,7 +107,7 @@ def get_model(base_model_name, load_model_path):
         if not path.isfile(load_model_path):
             logger.warning('load_model_path error')
             return model
-        model.load_state_dict(torch.load(args.load_model_path, map_location=torch.device('cpu')))
+        model.load_state_dict(torch.load(load_model_path, map_location=torch.device('cpu')))
         logger.info('State load success!!')
     return model
 
