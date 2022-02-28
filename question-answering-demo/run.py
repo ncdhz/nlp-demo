@@ -52,9 +52,9 @@ def prediction(model, test_dataloader, format_data, pretreat_data, n_best_size, 
         save_model = path.join(save_model_path, file_name)
         accelerator.wait_for_everyone()
         if hasattr(model, 'module'):
-            torch.save(model.module, save_model)
+            torch.save(model.module.state_dict(), save_model)
         else:
-            torch.save(model, save_model)
+            torch.save(model.state_dict(), save_model)
     
     def run():
         model.eval()
