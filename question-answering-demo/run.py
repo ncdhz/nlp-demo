@@ -49,12 +49,10 @@ def prediction(model, test_dataloader, format_data, pretreat_data, n_best_size, 
     best_result = QAPredictionResult(0, 0)
     
     def save_model(file_name):
-        save_model = path.join(save_model_path, file_name)
+        save_model_p = path.join(save_model_path, file_name)
         accelerator.wait_for_everyone()
-        if hasattr(model, 'module'):
-            torch.save(model.module.state_dict(), save_model)
-        else:
-            torch.save(model.state_dict(), save_model)
+        unwrapped_model = accelerator.unwrap_model(model)
+        accelerator.save(unwrapped_model.state_dict(), save_model_p)
     
     def run():
         model.eval()
@@ -74,12 +72,11 @@ def prediction(model, test_dataloader, format_data, pretreat_data, n_best_size, 
         logger.info(f'F1 : {result.f1}, EM: {result.em}')
         if do_train:
             save_model('last_model.pth')
-        if result.f1 > best_result.f1:
-            best_result.f1 = result.f1
-            best_result.em = result.em
-            if do_train:
+            if result.f1 > best_result.f1:
+                best_result.f1 = result.f1
+                best_result.em = result.em
                 save_model('best_model.pth')
-        logger.info(f'Best F1 : {best_result.f1}, Best EM: {best_result.em}')
+            logger.info(f'Best F1 : {best_result.f1}, Best EM: {best_result.em}')
         del all_start_logits
         del all_end_logits
 
@@ -107,7 +104,7 @@ def get_model(base_model_name, load_model_path):
         if not path.isfile(load_model_path):
             logger.warning('load_model_path error')
             return model
-        model.load_state_dict(torch.load(load_model_path))
+        model.load_state_dict(torch.load(load_model_path, map_location=lambda storage, loc: storage))
         logger.info('State load success!!')
     return model
 
