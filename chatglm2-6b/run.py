@@ -27,7 +27,7 @@ def handle():
     question = data[question_]
     history = data.get('history', [])
     response, _ = model.chat(tokenizer, question, history=history)
-   
+    LOGGER.info(f'Question: {question}. Answer: {response}.')
     return response
 
 if __name__ == '__main__':
